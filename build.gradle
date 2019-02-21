@@ -2,7 +2,7 @@
 group 'com.lab'
 version '1.0-SNAPSHOT'
 
-apply plugin: 'java' //指定scala插件
+apply plugin: 'java' //指定java插件
 apply plugin: 'scala' //指定scala插件
 
 sourceCompatibility = 1.8
@@ -22,5 +22,4 @@ dependencies {
     compile group: 'org.apache.hbase', name: 'hbase-server', version: '1.4.8'
     compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.45'
     compile group: 'redis.clients', name: 'jedis', version: '2.10.1'
-    compile group: 'RedisLabs', name: 'spark-redis', version: '0.3.2'
 }
