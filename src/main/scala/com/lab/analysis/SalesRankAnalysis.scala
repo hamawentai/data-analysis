@@ -32,7 +32,6 @@ object SalesRankAnalysis extends App {
     } else {
       ("空", ("0", "0"))
     }
-
   }
 
   val rdd = rddBase.map(func1).filter(_._1 != "空")
