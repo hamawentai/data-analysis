@@ -15,6 +15,7 @@ object PriceAnalysis {
   val OUTPUT_PATH = "/home/twl/Desktop/book/result"
 
   def main(args: Array[String]): Unit = {
+
     val conf: SparkConf = new SparkConf().setAppName("price").setMaster("local[*]")
     val spark: SparkSession = SparkSession.builder().config(conf).getOrCreate()
     val sc: SparkContext = spark.sparkContext
@@ -27,8 +28,7 @@ object PriceAnalysis {
       } else {
         false
       }
-    })
-      .map(line => {
+    }).map(line => {
       val res: Array[String] = line.split(",")
       (res(3).toDouble,res(5).toInt) //返回(价格,数量)
     }).reduceByKey(_+_)
