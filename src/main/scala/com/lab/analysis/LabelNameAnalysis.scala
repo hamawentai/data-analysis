@@ -11,6 +11,7 @@ import org.apache.spark.sql.types.{StringType, StructField, StructType}
 
 /**
   * 统计一级分类
+  * spark sql
   */
 object LabelNameAnalysis {
   val INPUT_PATH = "/home/twl/Desktop/book/train.tsv"

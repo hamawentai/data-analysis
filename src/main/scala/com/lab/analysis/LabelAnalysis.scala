@@ -8,6 +8,7 @@ import org.apache.spark.sql.types.{StringType, StructField, StructType}
 
 /**
   * 将标签存入数据库
+  *   spark sql
   */
 object LabelAnalysis {
 

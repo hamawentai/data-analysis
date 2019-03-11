@@ -1,5 +1,7 @@
 package com.lab.analysis
 
+import com.lab.java.PriceUtil
+import com.lab.java.price.PriceDAO
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.SparkSession
 import org.apache.log4j.Logger
@@ -8,11 +10,12 @@ import org.apache.spark.rdd.RDD
 /**
   * 价格购买量分析
   * 输出结果(价格,数量) 按照价格排序
+  *
+  * mysql jar
   */
 object PriceAnalysis {
 
-  val INPUT_PATH = "/home/twl/Desktop/book/test.txt"
-  val OUTPUT_PATH = "/home/twl/Desktop/book/result"
+  val INPUT_PATH = "/home/twl/Desktop/book/test/test.txt"
 
   def main(args: Array[String]): Unit = {
 
@@ -31,12 +34,17 @@ object PriceAnalysis {
     }).map(line => {
       val res: Array[String] = line.split(",")
       (res(3).toDouble,res(5).toInt) //返回(价格,数量)
-    }).reduceByKey(_+_)
+    }).map(res => {
+      val index = PriceUtil.getIndex(res._1)
+      (index,res._2)
+    }).reduceByKey(_+_).sortBy(_._1).collect()
 
-    res.sortByKey()
-      .map(res=>{
-        res._1+","+res._2
-      }).saveAsTextFile(OUTPUT_PATH)
+    res.map(res => {
+      val price = PriceUtil.getPrice(res._1)
+      PriceDAO.insertOrUpdate(price,res._2)
+      println(res)
+//      price+"\t"+res._2
+    })
 
     sc.stop()
   }

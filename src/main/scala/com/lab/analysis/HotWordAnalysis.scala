@@ -14,6 +14,11 @@ import org.apache.spark.sql.types.{IntegerType, StringType, StructField, StructT
 import scala.collection.JavaConverters
 import scala.collection.mutable.ArrayBuffer
 
+/**
+  * 词云分析
+  *   ansj分词jar
+  *   mysql jar
+  */
 object HotWordAnalysis {
 
   val INPUT = "/home/twl/Desktop/book/test.txt"
