@@ -11,7 +11,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 object SalesRankAnalysis extends App {
   //  Logger.getLogger("org.apache.spark").setLevel(Level.WARN)
   val logger = Logger.getLogger(this.getClass)
-  val hdfs = "hdfs://hadoop1:9000"
+  val hdfs = "hdfs://wx:9000"
   val conf: SparkConf = new SparkConf().setAppName("spiderKeywords").setMaster("local[*]")
   val spark: SparkSession = SparkSession.builder().config(conf).getOrCreate()
   val sc: SparkContext = spark.sparkContext
@@ -40,11 +40,11 @@ object SalesRankAnalysis extends App {
     val totle2 = b._1.toDouble.toLong * b._2.toLong
     val totle = totle1 + totle2
     (totle.toString, "1")
-  }).sortBy(_._2._1.toLong, false)
+  }).sortBy(_._2._1.toLong, ascending = false)
   val result: Array[String] = rdd2.take(10).map(tuple => {
     tuple._1 + "\t" + tuple._2._1
   })
-  sc.parallelize(result).saveAsTextFile(hdfs + "/result/out")
+  sc.parallelize(result).saveAsTextFile(hdfs + "/res")
   result.foreach(println)
   sc.stop()
   spark.stop()

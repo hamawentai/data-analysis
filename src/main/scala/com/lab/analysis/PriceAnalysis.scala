@@ -1,9 +1,7 @@
 package com.lab.analysis
 
-import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.SparkSession
-import org.apache.log4j.Logger
-import org.apache.spark.rdd.RDD
+import org.apache.spark.{SparkConf, SparkContext}
 
 /**
   * 价格购买量分析
@@ -11,16 +9,19 @@ import org.apache.spark.rdd.RDD
   */
 object PriceAnalysis {
 
-  val INPUT_PATH = "/home/twl/Desktop/book/test.txt"
-  val OUTPUT_PATH = "/home/twl/Desktop/book/result"
+  //  val INPUT_PATH = "hdfs://wx:9000/test.txt"
+  //  val OUTPUT_PATH = "hdfs://wx:9000/result"
 
   def main(args: Array[String]): Unit = {
     val conf: SparkConf = new SparkConf().setAppName("price").setMaster("local[*]")
     val spark: SparkSession = SparkSession.builder().config(conf).getOrCreate()
     val sc: SparkContext = spark.sparkContext
 
+    val INPUT_PATH = args(0)
+    val OUTPUT_PATH = args(1)
+
     val rdd = sc.textFile(INPUT_PATH)
-    val res = rdd.filter(line=>{
+    val res = rdd.filter(line => {
       val len = line.split(",").size
       if (len == 6) {
         true
@@ -29,13 +30,13 @@ object PriceAnalysis {
       }
     })
       .map(line => {
-      val res: Array[String] = line.split(",")
-      (res(3).toDouble,res(5).toInt) //返回(价格,数量)
-    }).reduceByKey(_+_)
+        val res: Array[String] = line.split(",")
+        (res(3).toDouble, res(5).toInt) //返回(价格,数量)
+      }).reduceByKey(_ + _)
 
     res.sortByKey()
-      .map(res=>{
-        res._1+","+res._2
+      .map(res => {
+        res._1 + "," + res._2
       }).saveAsTextFile(OUTPUT_PATH)
 
     sc.stop()

@@ -16,7 +16,7 @@ object RedistributionAnalysis2Redis extends App {
   Logger.getLogger("org.apache.spark").setLevel(Level.WARN)
   val logger = Logger.getLogger(this.getClass)
   val redisPool: JedisPool = RedisPool.getRedisPool
-  val hdfs = "hdfs://hadoop1:9000/mock"
+  val hdfs = "hdfs://wx:9000/mock"
   val conf: SparkConf = new SparkConf().setAppName("spiderKeywords").setMaster("local[*]")
   val spark: SparkSession = SparkSession.builder().config(conf).getOrCreate()
   val sc: SparkContext = spark.sparkContext
