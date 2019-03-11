@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="wx">
+    <output-path>$PROJECT_DIR$/out/artifacts/wx</output-path>
+    <root id="archive" name="wx.jar">
+      <element id="module-output" name="data-analysis" />
+    </root>
+  </artifact>
+</component>
