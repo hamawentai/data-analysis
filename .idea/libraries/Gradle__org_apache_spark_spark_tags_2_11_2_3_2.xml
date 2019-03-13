@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.apache.spark:spark-tags_2.11:2.3.2">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.spark/spark-tags_2.11/2.3.2/69ccba2615564256f2b2d1733aac92e4dae879bb/spark-tags_2.11-2.3.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.spark/spark-tags_2.11/2.3.2/b9f61367bac91e34f75a23e02ab7afd69b2756b8/spark-tags_2.11-2.3.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

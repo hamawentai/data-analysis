@@ -1,30 +1,30 @@
 package com.lab.analysis
 
-import com.lab.java.PriceUtil
-import com.lab.java.price.PriceDAO
-import org.apache.spark.{SparkConf, SparkContext}
+import com.lab.PriceUtil
+import com.lab.price.PriceDAO
 import org.apache.spark.sql.SparkSession
-import org.apache.log4j.Logger
-import org.apache.spark.rdd.RDD
+import org.apache.spark.{SparkConf, SparkContext}
 
 /**
   * 价格购买量分析
   * 输出结果(价格,数量) 按照价格排序
   *
   * mysql jar
+  * price
   */
 object PriceAnalysis {
 
-  val INPUT_PATH = "/home/twl/Desktop/book/test/test.txt"
 
   def main(args: Array[String]): Unit = {
 
-    val conf: SparkConf = new SparkConf().setAppName("price").setMaster("local[*]")
+    val conf: SparkConf = new SparkConf().setAppName(this.getClass.getName).setMaster(args(0))
     val spark: SparkSession = SparkSession.builder().config(conf).getOrCreate()
     val sc: SparkContext = spark.sparkContext
 
+    // 数据输入文件夹
+    val INPUT_PATH = args(1)
     val rdd = sc.textFile(INPUT_PATH)
-    val res = rdd.filter(line=>{
+    val res = rdd.filter(line => {
       val len = line.split(",").size
       if (len == 6) {
         true
@@ -33,17 +33,15 @@ object PriceAnalysis {
       }
     }).map(line => {
       val res: Array[String] = line.split(",")
-      (res(3).toDouble,res(5).toInt) //返回(价格,数量)
+      (res(3).toDouble, res(5).toInt) //返回(价格,数量)
     }).map(res => {
       val index = PriceUtil.getIndex(res._1)
-      (index,res._2)
-    }).reduceByKey(_+_).sortBy(_._1).collect()
+      (index, res._2)
+    }).reduceByKey(_ + _).sortBy(_._1).collect()
 
-    res.map(res => {
+    res.foreach(res => {
       val price = PriceUtil.getPrice(res._1)
-      PriceDAO.insertOrUpdate(price,res._2)
-      println(res)
-//      price+"\t"+res._2
+      PriceDAO.insertOrUpdate(price, res._2)
     })
 
     sc.stop()

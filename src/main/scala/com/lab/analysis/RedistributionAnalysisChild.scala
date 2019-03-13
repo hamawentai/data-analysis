@@ -16,14 +16,14 @@ object RedistributionAnalysisChild {
   def main(args: Array[String]): Unit = {
     Logger.getLogger("org.apache.spark").setLevel(Level.WARN)
     val logger = Logger.getLogger(this.getClass)
-    val client: MongoClient = new MongoClient("localhost", 27017)
+    val client: MongoClient = new MongoClient("wx", 27017)
     val database: MongoDatabase = client.getDatabase("newdb")
     val collection: MongoCollection[Document] = database.getCollection("redistribution")
-    val hdfs = "hdfs://wx:9000"
-    val conf: SparkConf = new SparkConf().setAppName("spiderKeywords").setMaster("local[*]")
+    val conf: SparkConf = new SparkConf().setAppName(this.getClass.getName).setMaster(args(0))
+    val hdfs = args(1)
     val spark: SparkSession = SparkSession.builder().config(conf).getOrCreate()
     val sc: SparkContext = spark.sparkContext
-    val rddBase: RDD[String] = sc.textFile(hdfs + "/mock")
+    val rddBase: RDD[String] = sc.textFile(hdfs)
     val map = new mutable.HashMap[String, Int]()
     val list = List("黑龙江省", "福建省", "山西省", "江西省", "浙江省", "江苏省", "安徽省", "内蒙古自治区", "辽宁省", "河北省", "吉林省")
     var index = 0
@@ -85,10 +85,7 @@ case class ProvincePartition(num: Int)(map: mutable.Map[String, Int]) extends Pa
   override def numPartitions: Int = num
 
   override def getPartition(key: Any): Int = key match {
-    case (a: String, b: String) => {
-      val no = map(a.toString)
-      no
-    }
+    case (a: String, b: String) => map(a.toString)
     case _ => throw new Exception("key 值不对")
   }
 }

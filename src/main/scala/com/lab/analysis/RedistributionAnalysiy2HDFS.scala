@@ -9,6 +9,7 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.{SparkConf, SparkContext}
 import org.bson.Document
+
 /**
   * with hdfs
   */
@@ -16,10 +17,9 @@ import org.bson.Document
 object RedistributionAnalysiy2HDFS extends App {
   Logger.getLogger("org.apache.spark").setLevel(Level.WARN)
   val logger = Logger.getLogger(this.getClass)
-    val hdfs = "hdfs://wx:9000/mock"
-    val conf: SparkConf = new SparkConf().setAppName("spiderKeywords").setMaster("local[*]")
+  val hdfs = args(1)
+  val conf: SparkConf = new SparkConf().setAppName(this.getClass.getName).setMaster(args(0))
   val inputFile = hdfs
-//  val outputFile = args(1)
   val spark: SparkSession = SparkSession.builder().config(conf).getOrCreate()
   val sc: SparkContext = spark.sparkContext
   val rddBase: RDD[String] = sc.textFile(inputFile)

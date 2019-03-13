@@ -1,9 +1,14 @@
 package com.lab.analysis
 
+import java.util
+
+import com.mongodb.MongoClient
+import com.mongodb.client.{MongoCollection, MongoDatabase}
 import org.apache.log4j.Logger
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.{SparkConf, SparkContext}
+import org.bson.Document
 
 /**
   *
@@ -11,11 +16,11 @@ import org.apache.spark.{SparkConf, SparkContext}
 object SalesRankAnalysis extends App {
   //  Logger.getLogger("org.apache.spark").setLevel(Level.WARN)
   val logger = Logger.getLogger(this.getClass)
-  val hdfs = "hdfs://wx:9000"
-  val conf: SparkConf = new SparkConf().setAppName("spiderKeywords").setMaster("local[*]")
+  val conf: SparkConf = new SparkConf().setAppName(this.getClass.getName).setMaster(args(0))
   val spark: SparkSession = SparkSession.builder().config(conf).getOrCreate()
   val sc: SparkContext = spark.sparkContext
-  val rddBase: RDD[String] = sc.textFile(hdfs + "/mock")
+  val hdfs = args(1)
+  val rddBase: RDD[String] = sc.textFile(hdfs)
 
   val func1: String => (String, (String, String)) = (line: String) => {
     val fileds = line.split(",")
@@ -41,11 +46,16 @@ object SalesRankAnalysis extends App {
     val totle = totle1 + totle2
     (totle.toString, "1")
   }).sortBy(_._2._1.toLong, ascending = false)
-  val result: Array[String] = rdd2.take(10).map(tuple => {
-    tuple._1 + "\t" + tuple._2._1
+  //      tuple._1 + "\t" + tuple._2._1
+  val result = rdd2.take(10).foreach(ele => {
+    val client: MongoClient = new MongoClient("wx", 27017)
+    val database: MongoDatabase = client.getDatabase("newdb")
+    val collection: MongoCollection[Document] = database.getCollection("label_rank")
+    val map = new util.HashMap[String, Object]()
+    map.put("label", ele._1)
+    map.put("value", ele._2._1)
+    collection.insertOne(new Document(map))
   })
-  sc.parallelize(result).saveAsTextFile(hdfs + "/res")
-  result.foreach(println)
   sc.stop()
   spark.stop()
 }
